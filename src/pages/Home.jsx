@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const api_key = import.meta.env.VITE_REACT_APP_WEATHER_API_KEY;
 
@@ -43,6 +44,13 @@ const Home = () => {
     testApi();
   }, []);
 
+  const navigate = useNavigate()
+
+  const handleCityClick = (city) => {
+    navigate('/city', {state: {city}})
+  }
+
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
@@ -50,7 +58,7 @@ const Home = () => {
     <div className="App">
       <header className="App-header">
         {cities.map((city) => (
-          <ul key={city.id} style={{ marginBottom: "1rem" }}>
+          <ul key={city.id} onClick={()=>handleCityClick(city)}>
             <li>Name: {city.name}</li>
             <li>Feels Like: {city.main.feels_like}</li>
             <li>Humidity: {city.main.humidity}</li>
