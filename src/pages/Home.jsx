@@ -8,6 +8,7 @@ const Home = () => {
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cityName, setCityName] = useState("");
 
   const testApi = async () => {
     const ids = [
@@ -44,12 +45,15 @@ const Home = () => {
     testApi();
   }, []);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleCityClick = (city) => {
-    navigate('/city', {state: {city}})
-  }
+    navigate("/city", { state: { city } });
+  };
 
+  const handleSearch = () => {
+    console.log(cityName);
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
@@ -57,8 +61,19 @@ const Home = () => {
   return (
     <div className="App">
       <header className="App-header">
+        <div>
+          <input
+            type="text"
+            name="city"
+            value={cityName}
+            onChange={(e) => {
+              setCityName(e.target.value);
+            }}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </div>
         {cities.map((city) => (
-          <ul key={city.id} onClick={()=>handleCityClick(city)}>
+          <ul key={city.id} onClick={() => handleCityClick(city)}>
             <li>Name: {city.name}</li>
             <li>Feels Like: {city.main.feels_like}</li>
             <li>Humidity: {city.main.humidity}</li>
