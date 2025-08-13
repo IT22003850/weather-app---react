@@ -2,7 +2,6 @@ import React from "react";
 import { useLocation } from "react-router";
 
 const City = () => {
-
     const location = useLocation()
     const {city} = location.state;
   return (
