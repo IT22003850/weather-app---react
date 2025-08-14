@@ -2,26 +2,27 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-const api_key = import.meta.env.VITE_REACT_APP_WEATHER_API_KEY;
+const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
 const Home = () => {
+  const [cityName, setCityName] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [cities, setCities] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [cityName, setCityName] = useState("");
 
-  const testApi = async () => {
-    const ids = [
-      "1248991", // Colombo
-      "1850147", // Tokyo
-      "2644210", // Liverpool
-      "2988507", // Paris
-      "2147714", // Sydney
-      "4930956", // Boston
-      "1796236", // Shanghai
-      "3143244", // Oslo
-    ];
+  const IDs = [
+    "1248991", // Colombo
+    "1850147", // Tokyo
+    "2644210", // Liverpool
+    "2988507", // Paris
+    "2147714", // Sydney
+    "4930956", // Boston
+    "1796236", // Shanghai
+    "3143244", // Oslo
+  ];
 
+  const fetchWeather = async (ids) => {
     try {
       const requests = ids.map((id) =>
         fetch(
@@ -41,9 +42,28 @@ const Home = () => {
     }
   };
 
+  const getCityByName = async (cityName) => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch data..!");
+      }
+      const data = response.json();
+      console.log(data);
+    } catch (error) {
+      console.log(`something went wrong: ${error}`);
+    }
+  };
+
   useEffect(() => {
-    testApi();
+    fetchWeather(IDs);
   }, []);
+
+  useEffect(() => {
+    getCityByName(cityName);
+  }, [cityName]);
 
   const navigate = useNavigate();
 
@@ -52,7 +72,8 @@ const Home = () => {
   };
 
   const handleSearch = () => {
-    console.log(cityName);
+    setCityName(searchTerm)
+    console.log(searchTerm);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -65,9 +86,9 @@ const Home = () => {
           <input
             type="text"
             name="city"
-            value={cityName}
+            value={searchTerm}
             onChange={(e) => {
-              setCityName(e.target.value);
+              setSearchTerm(e.target.value);
             }}
           />
           <button onClick={handleSearch}>Search</button>
