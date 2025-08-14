@@ -88,7 +88,8 @@ const City = () => {
             spaceBetween={20}
             slidesPerView={"auto"}
             pagination={{ clickable: true }}
-            modules={[Pagination]}
+            navigation={true} // enable arrows
+            modules={[Pagination, Navigation]} // include Navigation here
             className="pb-8"
           >
             {cityForecast.list.map((forecast, index) => {
