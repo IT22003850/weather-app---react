@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import CityCard from "../components/CityCard";
 
 const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -113,31 +114,15 @@ const Home = () => {
         </div>
         {!searchedCity &&
           cities.map((city) => (
-            <ul key={city.id} onClick={() => handleCityClick(city)}>
-              <li>Name: {city.name}</li>
-              <li>Feels Like: {city.main.feels_like}</li>
-              <li>Humidity: {city.main.humidity}</li>
-              <li>Country: {city.sys.country}</li>
-              <li>Icon: {city.weather[0].icon}</li>
-              <img
-                src={`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`}
-                alt={city.weather[0].description}
-              />
-            </ul>
+            <div key={city.name} onClick={() => handleCityClick(city)}>
+              <CityCard city={city} />
+            </div>
           ))}
 
         {searchedCity && (
-          <ul onClick={() => handleCityClick(searchedCity)}>
-            <li>Name: {searchedCity.name}</li>
-            <li>Feels Like: {searchedCity.main.feels_like}</li>
-            <li>Humidity: {searchedCity.main.humidity}</li>
-            <li>Country: {searchedCity.sys.country}</li>
-            <li>Icon: {searchedCity.weather[0].icon}</li>
-            <img
-              src={`https://openweathermap.org/img/wn/${searchedCity.weather[0].icon}@2x.png`}
-              alt={searchedCity.weather[0].description}
-            />
-          </ul>
+          <div onClick={() => handleCityClick(searchedCity)}>
+            <CityCard city={searchedCity} />
+          </div>
         )}
       </header>
     </div>
