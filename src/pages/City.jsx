@@ -7,6 +7,8 @@ import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { FaTemperatureHigh, FaWind } from "react-icons/fa";
+import { WiHumidity } from "react-icons/wi";
 
 const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -50,16 +52,15 @@ const City = () => {
     }
   };
 
-useEffect(() => {
-  if (city) {
-    // If city is already passed from Home, no need to fetch again
-    setNewCity(city);
-    setLoading(false);
-  } else if (lon && lat) {
-    getCityByCoord(lon, lat);
-  }
-}, [city, lon, lat]);
-
+  useEffect(() => {
+    if (city) {
+      // If city is already passed from Home, no need to fetch again
+      setNewCity(city);
+      setLoading(false);
+    } else if (lon && lat) {
+      getCityByCoord(lon, lat);
+    }
+  }, [city, lon, lat]);
 
   useEffect(() => {
     if (lon && lat) getCityForecast(lon, lat);
@@ -80,21 +81,21 @@ useEffect(() => {
       {/* Forecast Swiper */}
       {cityForecast?.list && (
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">5-Day Forecast</h2>
+          <h2 className="text-2xl font-semibold text-blue-800 mb-4">
+            Forecast
+          </h2>
           <Swiper
-            modules={[Navigation, Pagination]}
-            navigation
+            spaceBetween={20}
+            slidesPerView={"auto"}
             pagination={{ clickable: true }}
-            spaceBetween={16}
-            breakpoints={{
-              320: { slidesPerView: 2 },
-              640: { slidesPerView: 3 },
-              1024: { slidesPerView: 5 },
-            }}
+            modules={[Pagination]}
+            className="pb-8"
           >
             {cityForecast.list.map((forecast, index) => {
               const date = new Date(forecast.dt * 1000);
-              const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+              const dayName = date.toLocaleDateString("en-US", {
+                weekday: "short",
+              });
               const formattedTime = date.toLocaleTimeString("en-US", {
                 hour: "numeric",
                 minute: "numeric",
@@ -102,15 +103,44 @@ useEffect(() => {
               });
 
               return (
-                <SwiperSlide key={index}>
-                  <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center">
-                    <p className="text-lg font-semibold">{forecast.main.temp}°C</p>
+                <SwiperSlide key={index} style={{ width: "220px" }}>
+                  <div className="bg-white/30 backdrop-blur-md rounded-2xl shadow-lg p-4 flex flex-col items-center gap-2 border border-white/20 hover:scale-105 transition-transform duration-300">
+                    {/* Temperature */}
+                    <div className="flex items-center gap-1">
+                      <FaTemperatureHigh className="text-red-500" />
+                      <span className="text-lg font-bold">
+                        {forecast.main.temp}°C
+                      </span>
+                    </div>
+
+                    {/* Weather Icon */}
                     <img
                       src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
                       alt={forecast.weather[0].description}
+                      className="w-16 h-16 drop-shadow-lg"
                     />
-                    <p className="text-sm text-gray-600">{dayName}</p>
-                    <p className="text-xs text-gray-500">{formattedTime}</p>
+
+                    {/* Humidity */}
+                    <div className="flex items-center gap-1">
+                      <WiHumidity className="text-blue-400 text-xl" />
+                      <span className="text-sm text-gray-700">
+                        {forecast.main.humidity}%
+                      </span>
+                    </div>
+
+                    {/* Wind Speed */}
+                    <div className="flex items-center gap-1">
+                      <FaWind className="text-teal-500" />
+                      <span className="text-sm text-gray-700">
+                        {forecast.wind.speed} m/s
+                      </span>
+                    </div>
+
+                    {/* Date & Time */}
+                    <p className="text-sm font-medium text-gray-800">
+                      {dayName}
+                    </p>
+                    <p className="text-xs text-gray-600">{formattedTime}</p>
                   </div>
                 </SwiperSlide>
               );
