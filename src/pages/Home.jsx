@@ -11,17 +11,18 @@ const Home = () => {
   const [triggerSearch, setTriggerSearch] = useState(false);
   const [cities, setCities] = useState([]);
   const [searchedCity, setSearchedCity] = useState();
+  const [userCity, setUserCity] = useState(); // <-- user's location city
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const IDs = [
+  const DEFAULT_CITY_IDS = [
     "1248991", "1850147", "2644210", "2988507",
     "2147714", "4930956", "1796236", "3143244"
   ];
 
   const fetchWeather = async (ids) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const requests = ids.map((id) =>
         fetch(
           `https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${api_key}&units=metric`
@@ -43,22 +44,51 @@ const Home = () => {
     if (!triggerSearch) return;
     setLoading(true);
     try {
-      const response = await fetch(
+      const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}&units=metric`
       );
-      if (!response.ok) throw new Error("Failed to fetch data..!");
-      const data = await response.json();
+      if (!res.ok) throw new Error("Failed to fetch data..!");
+      const data = await res.json();
       setSearchedCity(data);
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
       setTriggerSearch(false);
     }
   };
 
-  useEffect(() => { fetchWeather(IDs); }, []);
+  const getCityByCoords = async (lat, lon) => {
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`
+      );
+      if (!res.ok) throw new Error("Failed to fetch user's city");
+      const data = await res.json();
+      setUserCity(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Fetch default cities
+  useEffect(() => { fetchWeather(DEFAULT_CITY_IDS); }, []);
+
+  // Fetch city by search
   useEffect(() => { getCityByName(cityName); }, [cityName]);
+
+  // Detect user location on mount
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          getCityByCoords(latitude, longitude);
+        },
+        (err) => console.log("Geolocation error:", err)
+      );
+    }
+  }, []);
 
   const navigate = useNavigate();
   const handleCityClick = (city) => {
@@ -97,19 +127,35 @@ const Home = () => {
         </div>
       </header>
 
+     {/* Display user location city first */}
+{userCity && (
+  <div
+    onClick={() => handleCityClick(userCity)}
+    className="mb-6 cursor-pointer transform hover:scale-105 transition duration-300"
+  >
+    <div className= "backdrop-blur-md rounded-2xl p-4  flex-col items-center gap-2 shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 mx-auto">
+      <span className="text-sm font-semibold text-yellow-800">
+        📍 Your Location
+      </span>
+      <CityCard city={userCity} />
+    </div>
+  </div>
+)}
+
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {!searchedCity &&
-          cities.map((city) => (
-            <div key={city.name} onClick={() => handleCityClick(city)}>
-              <CityCard city={city} />
-            </div>
-          ))
-        }
+        {/* Display searched city */}
         {searchedCity && (
           <div onClick={() => handleCityClick(searchedCity)}>
             <CityCard city={searchedCity} />
           </div>
         )}
+
+        {/* Display default cities */}
+        {cities.map((city) => (
+          <div key={city.name} onClick={() => handleCityClick(city)}>
+            <CityCard city={city} />
+          </div>
+        ))}
       </div>
     </div>
   );
