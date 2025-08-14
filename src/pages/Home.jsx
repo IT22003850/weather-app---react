@@ -1,7 +1,7 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import CityCard from "../components/CityCard";
+import Spinner from "../components/Spinner";
 
 const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -15,14 +15,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   const IDs = [
-    "1248991", // Colombo
-    "1850147", // Tokyo
-    "2644210", // Liverpool
-    "2988507", // Paris
-    "2147714", // Sydney
-    "4930956", // Boston
-    "1796236", // Shanghai
-    "3143244", // Oslo
+    "1248991", "1850147", "2644210", "2988507",
+    "2147714", "4930956", "1796236", "3143244"
   ];
 
   const fetchWeather = async (ids) => {
@@ -36,7 +30,6 @@ const Home = () => {
           return res.json();
         })
       );
-
       const results = await Promise.all(requests);
       setCities(results);
     } catch (err) {
@@ -47,84 +40,77 @@ const Home = () => {
   };
 
   const getCityByName = async (cityName) => {
-    if (!triggerSearch) {
-      return; // Skip useEffect unless fetchTrigger is true
-    }
+    if (!triggerSearch) return;
     setLoading(true);
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}&units=metric`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch data..!");
-      }
+      if (!response.ok) throw new Error("Failed to fetch data..!");
       const data = await response.json();
       setSearchedCity(data);
-      console.log(data);
     } catch (error) {
-      console.log(`something went wrong: ${error}`);
+      setError(error.message);
     } finally {
       setLoading(false);
       setTriggerSearch(false);
     }
   };
 
-  useEffect(() => {
-    fetchWeather(IDs);
-  }, []);
-
-  useEffect(() => {
-    getCityByName(cityName);
-  }, [cityName]);
+  useEffect(() => { fetchWeather(IDs); }, []);
+  useEffect(() => { getCityByName(cityName); }, [cityName]);
 
   const navigate = useNavigate();
-
   const handleCityClick = (city) => {
     navigate(`/city?lon=${city.coord.lon}&lat=${city.coord.lat}`, { state: { city } });
   };
 
   const handleSearch = () => {
-    if (!searchTerm == "") {
+    if (searchTerm.trim() !== "") {
       setCityName(searchTerm);
       setTriggerSearch(true);
-      console.log(searchTerm);
-    }else{
-      alert("Please Enter a City Name to Search!")
+    } else {
+      alert("Please Enter a City Name to Search!");
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
+  if (loading) return <Spinner />;
+  if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
+    <div>
+      <header className="mb-8 text-center">
+        <div className="flex justify-center gap-2">
           <input
             type="text"
-            name="city"
+            placeholder="Enter city name..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button onClick={handleSearch}>
-            {loading ? "loading" : "search"}
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            Search
           </button>
         </div>
+      </header>
+
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {!searchedCity &&
           cities.map((city) => (
             <div key={city.name} onClick={() => handleCityClick(city)}>
               <CityCard city={city} />
             </div>
-          ))}
-
+          ))
+        }
         {searchedCity && (
           <div onClick={() => handleCityClick(searchedCity)}>
             <CityCard city={searchedCity} />
           </div>
         )}
-      </header>
+      </div>
     </div>
   );
 };
