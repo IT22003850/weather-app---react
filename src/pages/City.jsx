@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useSearchParams } from "react-router";
 import CityCard from "../components/CityCard";
 import Spinner from "../components/Spinner";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const api_key = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -64,36 +69,55 @@ useEffect(() => {
 
   return (
     <div>
-      {city ? <CityCard city={city} /> : <CityCard city={newCity} />}
+      {city ? (
+        <CityCard city={city} />
+      ) : loading ? (
+        <p>Loading City data..!</p>
+      ) : (
+        <CityCard city={newCity} />
+      )}
 
-      <h2 className="text-2xl font-bold text-gray-700 mt-8 mb-4">Forecast</h2>
-      <div className="flex overflow-x-auto gap-4 pb-4">
-        {cityForecast?.list?.map((fc, index) => {
-          const date = new Date(fc.dt * 1000);
-          const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
-          const formattedTime = date.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          });
+      {/* Forecast Swiper */}
+      {cityForecast?.list && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-4">5-Day Forecast</h2>
+          <Swiper
+            modules={[Navigation, Pagination]}
+            navigation
+            pagination={{ clickable: true }}
+            spaceBetween={16}
+            breakpoints={{
+              320: { slidesPerView: 2 },
+              640: { slidesPerView: 3 },
+              1024: { slidesPerView: 5 },
+            }}
+          >
+            {cityForecast.list.map((forecast, index) => {
+              const date = new Date(forecast.dt * 1000);
+              const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+              const formattedTime = date.toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              });
 
-          return (
-            <div
-              key={index}
-              className="bg-white rounded-xl shadow-lg p-4 min-w-[150px] flex-shrink-0 text-center"
-            >
-              <p className="text-lg font-bold">{fc.main.temp}°C</p>
-              <img
-                src={`https://openweathermap.org/img/wn/${fc.weather[0].icon}@2x.png`}
-                alt={fc.weather[0].description}
-                className="mx-auto"
-              />
-              <p className="text-gray-500">{dayName}</p>
-              <p className="text-gray-400">{formattedTime}</p>
-            </div>
-          );
-        })}
-      </div>
+              return (
+                <SwiperSlide key={index}>
+                  <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center">
+                    <p className="text-lg font-semibold">{forecast.main.temp}°C</p>
+                    <img
+                      src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
+                      alt={forecast.weather[0].description}
+                    />
+                    <p className="text-sm text-gray-600">{dayName}</p>
+                    <p className="text-xs text-gray-500">{formattedTime}</p>
+                  </div>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
+      )}
     </div>
   );
 };
