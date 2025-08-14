@@ -13,6 +13,10 @@ A modern, responsive weather application built with **React**, **Tailwind CSS**,
 - 📱 **Mobile-Friendly**: Fully responsive design for all screen sizes.
 - 🔄 **Loading States**: Displays a spinner during data fetching for a better user experience.
 
+## Live Demo 🌐
+
+Check out the live version of the Weather App here: [Weather App](https://weather-app-thilina.netlify.app/)
+
 ## Tech Stack 🛠️
 
 - **React**: Frontend library for building the user interface.
