@@ -30,7 +30,7 @@ const Home = () => {
     try {
       const requests = ids.map((id) =>
         fetch(
-          `https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${api_key}`
+          `https://api.openweathermap.org/data/2.5/weather?id=${id}&appid=${api_key}&units=metric`
         ).then((res) => {
           if (!res.ok) throw new Error(`Failed to fetch city ID ${id}`);
           return res.json();
@@ -53,7 +53,7 @@ const Home = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}`
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}&units=metric`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch data..!");
@@ -80,7 +80,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleCityClick = (city) => {
-    navigate("/city", { state: { city } });
+    navigate(`/city?lon=${city.coord.lon}&lat=${city.coord.lat}`, { state: { city } });
   };
 
   const handleSearch = () => {
