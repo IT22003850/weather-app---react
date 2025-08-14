@@ -25,6 +25,7 @@ const Home = () => {
   ];
 
   const fetchWeather = async (ids) => {
+    setLoading(true);
     try {
       const requests = ids.map((id) =>
         fetch(
@@ -48,6 +49,7 @@ const Home = () => {
     if (!triggerSearch) {
       return; // Skip useEffect unless fetchTrigger is true
     }
+    setLoading(true);
     try {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${api_key}`
@@ -61,6 +63,7 @@ const Home = () => {
     } catch (error) {
       console.log(`something went wrong: ${error}`);
     } finally {
+      setLoading(false);
       setTriggerSearch(false);
     }
   };
@@ -80,9 +83,13 @@ const Home = () => {
   };
 
   const handleSearch = () => {
-    setCityName(searchTerm);
-    setTriggerSearch(true);
-    console.log(searchTerm);
+    if (!searchTerm == "") {
+      setCityName(searchTerm);
+      setTriggerSearch(true);
+      console.log(searchTerm);
+    }else{
+      alert("Please Enter a City Name to Search!")
+    }
   };
 
   if (loading) return <p>Loading...</p>;
@@ -100,7 +107,9 @@ const Home = () => {
               setSearchTerm(e.target.value);
             }}
           />
-          <button onClick={handleSearch}>Search</button>
+          <button onClick={handleSearch}>
+            {loading ? "loading" : "search"}
+          </button>
         </div>
         {!searchedCity &&
           cities.map((city) => (
