@@ -1,17 +1,18 @@
 # Weather App 🌦️
 
-A modern, responsive weather application built with **React**, **Tailwind CSS**, and the **OpenWeatherMap API**. This app allows users to check current weather conditions and 5-day forecasts for cities worldwide, including their current location. It features a clean UI with interactive components and smooth navigation.
+A modern, responsive weather application built with **React**, **Tailwind CSS**, and the **OpenWeatherMap API**. This app allows users to check real-time weather conditions and 5-day forecasts for cities worldwide, including their current location. It features a sleek, interactive UI with smooth navigation and enhanced user experience.
 
 ## Features ✨
 
-- 🌍 **Current Weather**: View real-time weather data for any city or your current location.
-- 📅 **5-Day Forecast**: Check detailed weather forecasts with temperature, humidity, and wind speed.
-- 🔍 **City Search**: Search for weather conditions by city name.
-- 📍 **Geolocation**: Automatically detect and display weather for the user's location.
-- 🖼️ **Interactive UI**: Includes a responsive design with Swiper.js for forecast carousels and Tailwind CSS for styling.
-- 🚀 **Smooth Navigation**: Built with React Router for seamless page transitions.
-- 📱 **Mobile-Friendly**: Fully responsive design for all screen sizes.
-- 🔄 **Loading States**: Displays a spinner during data fetching for a better user experience.
+- 🌍 **Current Weather**: View real-time weather data (temperature, humidity, wind speed, and conditions) for any city or your current location.
+- 📅 **5-Day Forecast**: Explore a detailed 5-day forecast with temperature, humidity, wind speed, and weather conditions in an interactive carousel.
+- 🔍 **City Search**: Search for weather conditions by city name with instant results.
+- 📍 **Geolocation**: Automatically detect and display weather for the user's current location.
+- 🖼️ **Interactive UI**: Features a responsive design with Swiper.js for forecast carousels, hover effects, and Tailwind CSS for modern styling.
+- 🚀 **Smooth Navigation**: Built with React Router for seamless page transitions and a dynamic header with a "Back to Home" button.
+- 📱 **Mobile-Friendly**: Fully responsive design optimized for all screen sizes.
+- 🔄 **Loading States**: Displays a custom spinner during data fetching for a polished user experience.
+- 🖌️ **Enhanced Visuals**: Includes weather icons, hover animations, and a glassmorphism-inspired UI with backdrop blur effects.
 
 ## Live Demo 🌐
 
@@ -19,13 +20,13 @@ Check out the live version of the Weather App here: [Weather App](https://weathe
 
 ## Tech Stack 🛠️
 
-- **React**: Frontend library for building the user interface.
-- **Tailwind CSS**: Utility-first CSS framework for styling.
-- **Swiper.js**: For the forecast carousel with navigation and pagination.
-- **React Router**: For client-side routing.
-- **OpenWeatherMap API**: Provides weather data for cities and coordinates.
-- **React Icons**: For weather-related icons.
-- **Vite**: Build tool for fast development and production builds.
+- **React**: Frontend library for building dynamic user interfaces.
+- **Tailwind CSS**: Utility-first CSS framework for responsive and modern styling.
+- **Swiper.js**: Powers the interactive 5-day forecast carousel with navigation and pagination.
+- **React Router**: Enables client-side routing for smooth page transitions.
+- **OpenWeatherMap API**: Provides real-time weather and forecast data for cities and coordinates.
+- **React Icons**: Includes weather-related icons for temperature, humidity, wind, and more.
+- **Vite**: Fast build tool for development and production builds.
 
 ## Installation ⚙️
 
@@ -62,10 +63,12 @@ Follow these steps to set up the project locally:
 
 ## Usage 📖
 
-- **Home Page**: View weather for default cities or your current location. Use the search bar to find weather data for any city.
-- **City Page**: Click on a city card to view detailed weather information and a 5-day forecast.
-- **Navigation**: Use the "Back to Home" button or social media links in the header for navigation.
-- **Error Handling**: If a city is not found or the API fails, an error message is displayed.
+- **Home Page**:Search for a city or view weather for your current location and default cities (e.g., Tokyo, London, Paris). Click a city card to see detailed weather data.
+- **City Page**: Displays detailed weather information for a selected city and a 5-day forecast in an interactive Swiper carousel. Click a forecast card to view its details, with a "Back to Current Weather" button for navigation.
+- **Navigation**: Use the header's "Back to Home" button or social media links for quick navigation.
+- **Error Handling**: Displays user-friendly error messages for invalid city names or API failures.
+- **Interactive Forecast**: Forecast cards highlight on selection with a glowing ring and shadow effect for better user engagement.
+
 
 ## Screenshots 📸
 
@@ -75,14 +78,24 @@ Below are screenshots of the Weather App showcasing the **Home page** and **City
 ![Home Page](screenshots/home-page.png)
 *Displays the search bar, user location weather, and default city cards.*
 
+### Home Page(search)
+![Home Page](screenshots/search.png)
+*Displays the search bar, user location weather, and default city cards.*
+
 ### City Page
 ![City Page](screenshots/city-page.png)
+*Shows detailed weather information for a selected city and the 5-day forecast carousel.*
+
+### City Page(forecast)
+![City Page](screenshots/forecast.png)
 *Shows detailed weather information for a selected city and the 5-day forecast carousel.*
 
 ## Folder Structure 📁
 
 ```
-weather-app--react/
+weather-app---react/
+├── public/
+│   ├── _redirects
 ├── src/
 │   ├── components/
 │   │   ├── CityCard.jsx
