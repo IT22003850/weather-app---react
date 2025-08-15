@@ -16,6 +16,8 @@ const City = () => {
   const [newCity, setNewCity] = useState();
   const [cityForecast, setCityForecast] = useState();
   const [loading, setLoading] = useState(true);
+  const [cityDisplayData, setCityDisplayData] = useState(null);
+  const [selectedCard, setSelectedCard] = useState(-1);
 
   const [searchParams] = useSearchParams();
   const lon = searchParams.get("lon") || "";
@@ -52,9 +54,14 @@ const City = () => {
     }
   };
 
+  const cardClickHandler = (forecast, index) => {
+    console.log("Forecast clicked:", forecast, "at index:", index);
+    setSelectedCard(index);
+    setCityDisplayData(forecast);
+  };
+
   useEffect(() => {
     if (city) {
-      // If city is already passed from Home, no need to fetch again
       setNewCity(city);
       setLoading(false);
     } else if (lon && lat) {
@@ -70,7 +77,16 @@ const City = () => {
 
   return (
     <div>
-      {city ? (
+      {cityDisplayData ? (
+        <CityCard
+          city={cityDisplayData}
+          isForecast={true}
+          onBack={() => {
+            setCityDisplayData(null);
+            setSelectedCard(-1); // clear highlight when going back
+          }}
+        />
+      ) : city ? (
         <CityCard city={city} />
       ) : loading ? (
         <p>Loading City data..!</p>
@@ -87,7 +103,7 @@ const City = () => {
           <Swiper
             spaceBetween={20}
             slidesPerView={"auto"}
-            pagination={{ clickable: true }}
+            pagination={false}
             navigation={true} // enable arrows
             modules={[Pagination, Navigation]} // include Navigation here
             className="pb-8"
@@ -104,44 +120,56 @@ const City = () => {
               });
 
               return (
-                <SwiperSlide key={index} style={{ width: "220px" }}>
-                  <div className="bg-white/30 backdrop-blur-md rounded-2xl shadow-lg p-4 flex flex-col items-center gap-2 border border-white/20 hover:scale-105 transition-transform duration-300">
-                    {/* Temperature */}
-                    <div className="flex items-center gap-1">
-                      <FaTemperatureHigh className="text-red-500" />
-                      <span className="text-lg font-bold">
-                        {forecast.main.temp}°C
-                      </span>
+                <SwiperSlide
+                  key={index}
+                  style={{ width: "220px" }}
+                  onClick={() => cardClickHandler(forecast, index)}
+                >
+                  <div className="rounded-2xl overflow-hidden">
+                    <div
+                      className={`bg-white/30 backdrop-blur-md shadow-lg p-4 flex flex-col items-center gap-2 border border-white/20 hover:scale-105 transition-transform duration-300 ${
+                        index === selectedCard
+                          ? "ring-2 ring-blue-500 shadow-2xl shadow-blue-300/50 drop-shadow-[0_0_15px_rgba(59,130,246,0.7)]"
+                          : ""
+                      }`}
+                    >
+                      {/* Temperature */}
+                      <div className="flex items-center gap-1">
+                        <FaTemperatureHigh className="text-red-500" />
+                        <span className="text-lg font-bold">
+                          {forecast.main.temp}°C
+                        </span>
+                      </div>
+
+                      {/* Weather Icon */}
+                      <img
+                        src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
+                        alt={forecast.weather[0].description}
+                        className="w-16 h-16 drop-shadow-lg"
+                      />
+
+                      {/* Humidity */}
+                      <div className="flex items-center gap-1">
+                        <WiHumidity className="text-blue-400 text-xl" />
+                        <span className="text-sm text-gray-700">
+                          {forecast.main.humidity}%
+                        </span>
+                      </div>
+
+                      {/* Wind Speed */}
+                      <div className="flex items-center gap-1">
+                        <FaWind className="text-teal-500" />
+                        <span className="text-sm text-gray-700">
+                          {forecast.wind.speed} m/s
+                        </span>
+                      </div>
+
+                      {/* Date & Time */}
+                      <p className="text-sm font-medium text-gray-800">
+                        {dayName}
+                      </p>
+                      <p className="text-xs text-gray-600">{formattedTime}</p>
                     </div>
-
-                    {/* Weather Icon */}
-                    <img
-                      src={`https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`}
-                      alt={forecast.weather[0].description}
-                      className="w-16 h-16 drop-shadow-lg"
-                    />
-
-                    {/* Humidity */}
-                    <div className="flex items-center gap-1">
-                      <WiHumidity className="text-blue-400 text-xl" />
-                      <span className="text-sm text-gray-700">
-                        {forecast.main.humidity}%
-                      </span>
-                    </div>
-
-                    {/* Wind Speed */}
-                    <div className="flex items-center gap-1">
-                      <FaWind className="text-teal-500" />
-                      <span className="text-sm text-gray-700">
-                        {forecast.wind.speed} m/s
-                      </span>
-                    </div>
-
-                    {/* Date & Time */}
-                    <p className="text-sm font-medium text-gray-800">
-                      {dayName}
-                    </p>
-                    <p className="text-xs text-gray-600">{formattedTime}</p>
                   </div>
                 </SwiperSlide>
               );

@@ -8,13 +8,13 @@ import {
 } from "react-icons/fa";
 import { WiCloud, WiHumidity, WiBarometer } from "react-icons/wi";
 
-const CityCard = ({ city }) => {
+const CityCard = ({ city, isForecast = false, onBack }) => {
   return (
     <div className="bg-white/30 backdrop-blur-md rounded-2xl shadow-lg p-6 flex flex-col gap-3 w-full max-w-sm mx-auto border border-white/20 hover:scale-105 transition-transform duration-300">
       {/* City & Country */}
       <h2 className="text-2xl font-bold flex items-center gap-2 text-blue-900 drop-shadow">
         <FaGlobeAmericas className="text-blue-600" />
-        {city.name}, {city.sys.country}
+        {isForecast ? "Forecast Data" : `${city.name}, ${city.sys.country}`}
       </h2>
 
       {/* Weather Condition */}
@@ -26,7 +26,7 @@ const CityCard = ({ city }) => {
       {/* Temperature */}
       <div className="flex items-center gap-2 text-lg text-gray-800">
         <FaTemperatureHigh className="text-red-500" />
-        Temperature: {city.main.feels_like}°C
+        Temperature: {isForecast ? city.main.temp : city.main.feels_like}°C
       </div>
 
       {/* Humidity */}
@@ -35,24 +35,10 @@ const CityCard = ({ city }) => {
         Humidity: {city.main.humidity}%
       </div>
 
-      {/* Sea Level */}
-      {city.main.sea_level && (
-        <div className="flex items-center gap-2 text-lg text-gray-800">
-          <WiBarometer className="text-indigo-500" />
-          Sea Level: {city.main.sea_level} hpa
-        </div>
-      )}
-
       {/* Wind Speed */}
       <div className="flex items-center gap-2 text-lg text-gray-800">
         <FaWind className="text-teal-500" />
         Wind Speed: {city.wind.speed} m/s
-      </div>
-
-      {/* Summary */}
-      <div className="flex items-center gap-2 text-lg text-gray-800">
-        <FaInfoCircle className="text-gray-500" />
-        Summary: {city.weather[0].description}
       </div>
 
       {/* Weather Icon */}
@@ -63,6 +49,16 @@ const CityCard = ({ city }) => {
           className="w-24 h-24 drop-shadow-lg"
         />
       </div>
+
+      {/* Back Button */}
+      {isForecast && onBack && (
+        <button
+          onClick={onBack}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Back to Current Weather
+        </button>
+      )}
     </div>
   );
 };
