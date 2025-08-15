@@ -11,13 +11,19 @@ const Home = () => {
   const [triggerSearch, setTriggerSearch] = useState(false);
   const [cities, setCities] = useState([]);
   const [searchedCity, setSearchedCity] = useState();
-  const [userCity, setUserCity] = useState(); // <-- user's location city
+  const [userCity, setUserCity] = useState();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const DEFAULT_CITY_IDS = [
-    "1248991", "1850147", "2644210", "2988507",
-    "2147714", "4930956", "1796236", "3143244"
+    "1248991",
+    "1850147",
+    "2644210",
+    "2988507",
+    "2147714",
+    "4930956",
+    "1796236",
+    "3143244",
   ];
 
   const fetchWeather = async (ids) => {
@@ -71,13 +77,14 @@ const Home = () => {
     }
   };
 
-  // Fetch default cities
-  useEffect(() => { fetchWeather(DEFAULT_CITY_IDS); }, []);
+  useEffect(() => {
+    fetchWeather(DEFAULT_CITY_IDS);
+  }, []);
 
-  // Fetch city by search
-  useEffect(() => { getCityByName(cityName); }, [cityName]);
+  useEffect(() => {
+    getCityByName(cityName);
+  }, [cityName]);
 
-  // Detect user location on mount
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -92,7 +99,9 @@ const Home = () => {
 
   const navigate = useNavigate();
   const handleCityClick = (city) => {
-    navigate(`/city?lon=${city.coord.lon}&lat=${city.coord.lat}`, { state: { city } });
+    navigate(`/city?lon=${city.coord.lon}&lat=${city.coord.lat}`, {
+      state: { city },
+    });
   };
 
   const handleSearch = () => {
@@ -108,59 +117,66 @@ const Home = () => {
   if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
 
   return (
-<div>
-  <header className="mb-8 text-center">
-    <div className="flex justify-center gap-2">
-      <input
-        type="text"
-        placeholder="Enter city name..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      />
-      <button
-        onClick={handleSearch}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-      >
-        Search
-      </button>
-    </div>
-  </header>
-
-  {/* User Location Card */}
-  {userCity && (
-    <div
-      onClick={() => handleCityClick(userCity)}
-      className="mb-6 cursor-pointer transform hover:scale-105 transition duration-300"
-    >
-      <div className="backdrop-blur-md rounded-2xl p-4 flex-col items-center gap-2 shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 mx-auto">
-        <span className="text-sm font-semibold text-yellow-800">
-          📍 Your Location
-        </span>
-        <CityCard city={userCity} />
-      </div>
-    </div>
-  )}
-
-  <div className="grid gap-6 cursor-pointer sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    {/* Searched City */}
-    {searchedCity && (
-      <div onClick={() => handleCityClick(searchedCity)}>
-        <CityCard city={searchedCity} />
-      </div>
-    )}
-
-    {/* Default Cities */}
-    {!searchedCity &&
-      cities.map((city) => (
-        <div key={city.name} onClick={() => handleCityClick(city)}>
-          <CityCard city={city} />
+    <div>
+      <header className="mb-8 text-center">
+        <div className="flex justify-center gap-2">
+          <input
+            type="text"
+            placeholder="Enter city name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            Search
+          </button>
         </div>
-      ))
-    }
-  </div>
-</div>
+      </header>
 
+      {/* User Location Card */}
+      {!searchedCity && userCity && (
+        <div
+          onClick={() => handleCityClick(userCity)}
+          className="mb-6 cursor-pointer transform hover:scale-105 transition duration-300"
+        >
+          <div className="backdrop-blur-md rounded-2xl p-4 flex-col items-center gap-2 shadow-lg w-full sm:w-3/4 md:w-1/2 lg:w-1/3 mx-auto">
+            <span className="text-sm font-semibold text-yellow-800">
+              📍 Your Location
+            </span>
+            <CityCard city={userCity} />
+          </div>
+        </div>
+      )}
+
+      {/* Searched City - Centered */}
+      {searchedCity && (
+        <div className="mb-6 flex justify-center">
+          <div
+            onClick={() => handleCityClick(searchedCity)}
+            className="cursor-pointer transform hover:scale-105 transition duration-300 w-full sm:w-3/4 md:w-1/2 lg:w-1/3"
+          >
+            <div className="backdrop-blur-md rounded-2xl p-4 shadow-lg">
+              <span className="text-sm font-semibold text-blue-800">
+                🔍 Searched City
+              </span>
+              <CityCard city={searchedCity} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Default Cities Grid */}
+      <div className="grid gap-6 cursor-pointer sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {cities.map((city) => (
+          <div key={city.name} onClick={() => handleCityClick(city)}>
+            <CityCard city={city} />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
